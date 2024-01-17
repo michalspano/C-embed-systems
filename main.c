@@ -44,5 +44,7 @@ void show_help(char* basefile) {
   printf("Usage: %s <argument>\n", basefile);
   printf("This program greets the user with a simple message.\n");
   printf("Arguments:\n");
+  printf("  <argument>: string to display in the console.\n");
+  printf("Flags:\n");
   printf("  -h\tDisplays this help message to the user.\n");
 }
