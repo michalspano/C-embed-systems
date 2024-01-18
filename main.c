@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <string.h>
 
+// Define macro(s) for the program.
+#define HELP_FLAG "-h"
+
 // Declaration of the `show_help` function so it can be accessed in the
 // `main` function.
 void show_help(char* basefile);
@@ -29,7 +32,7 @@ int main(int argc, char** argv) {
    * This is not an issue, hence 0 is returned (the user simply wants
    * to learn about the usage of this program). The `show_help` function
    * is called. */
-  if (strcmp(arg, "-h") == 0) {
+  if (strcmp(arg, HELP_FLAG) == 0) {
     show_help(argv[0]);
     return 0;
   }
