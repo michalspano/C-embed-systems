@@ -1,21 +1,21 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 0
 // Exercises 1, 2, 3
-// Submission code: 456382 (provided by your TA-s)
+// Submission code: 456382
 
-// Include the required libraries
+// Include section
 #include <stdio.h>
 #include <string.h>
 
-// Define macro(s) for the program.
+// Macro section
 #define HELP_FLAG "-h"
 
 // Declaration of the `show_help` function so it can be accessed in the
 // `main` function.
 void show_help(char* basefile);
 
-// The main entry point of the program
-int main(int argc, char** argv) {
+// Main program section
+int main(int argc, char* argv[]) {
   /* Ensure that the expected number of arguments is passed. In case this is
    * not satisfied, i.e., the required argument is missing, the user is
    * prompted with a message and the program is exited with 1, hence indicating
