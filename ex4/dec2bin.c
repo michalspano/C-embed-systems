@@ -69,6 +69,7 @@ int main(int argc, char* argv[]) {
     int last_bit = n_sub & BIT1;
     printf("%d", last_bit);
   }
+  printf("\n"); // Add the missing new-line
  }
 
 /**

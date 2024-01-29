@@ -25,10 +25,14 @@ int main(int argc, char* argv[]) {
   // argument is present.
   if (argc < 2) {
     // Declare a buffer of 64 bits, we assume at most an unsigned `long` int.
-    char bit_buffer[LONG_BIT_SIZE];
+    // Add +1 to accomodate for the null-terminator. 
+    char bit_buffer[LONG_BIT_SIZE + 1];
     
-    scanf("%64s", bit_buffer); // Populate the buffer with the value from the input
-    bin = bit_buffer;          // Assign the obtained value to `bin`.
+    scanf("%64s", bit_buffer);        // Populate the buffer with the value from the input.
+                                      // Use a width of 64 to ensure that the buffer is not
+                                      // overflowed.
+    bit_buffer[LONG_BIT_SIZE] = '\0'; // Ensure that the buffer is null-terminated
+    bin = bit_buffer;                 // Assign the obtained value to `bin`.
 
   // Ensure that incorrect number of arguments is not present. In that case return
   // 2 to indicate an error.
@@ -76,6 +80,8 @@ int main(int argc, char* argv[]) {
     // Print the hexadecimal digit mapped from the 4 bit subsequence
     printf("%c", map_hexdigit(bin_buffer));
   }
+
+  printf("\n"); // Add the missing new-line
 }
 
 /**
@@ -94,11 +100,10 @@ char map_hexdigit(const char buff[HEX_DIGIT]) {
   int sum = 0; // Initialize a sum to 0
   
   // Obtain each bit from the sequence. This way, we can
-  // make a simple mapping, so that a value < 9 can be returned
+  // make a simple mapping, so that a value <= 9 can be returned
   // as itself, otherwise we map 10 - 15 to A - F.
   for (int i = 0; i < HEX_DIGIT; i++) {
-    char b = buff[i];                  // Extract the current bit
-    if (b == '1') {                    // Check if its 1
+    if (buff[i] == '1') {              // Check if the current bit is 1
       sum += 1 << (HEX_DIGIT - 1 - i); // Add the current power of 2
     }
   }
@@ -126,7 +131,7 @@ char map_hexdigit(const char buff[HEX_DIGIT]) {
 bool is_bin_num(const char* buff) {
   // Iterate over each char from the buffer
   for (int i = 0; i < strlen(buff); i++) {
-    // Return false when a char is not 0 or 1
+    // Return false when a char is not 0 nor 1
     if (buff[i] != '0' && buff[i] != '1') return false;
   }
 
