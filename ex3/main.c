@@ -101,6 +101,8 @@ int main(int argc, char** argv) {
 
    // show exit message
    // print game stats from the current session
+   // Note: this is merely optional and not demanded by the assignment.
+   // Comment the following paragraph if undesired.
    printf("\nThank you for playing! Your stats were:\n");
    printf("  > Rounds played: %d\n", totalRounds);
    printf("  > Rounds Won: %d\n", totalWins);
