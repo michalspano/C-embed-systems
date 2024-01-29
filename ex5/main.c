@@ -42,6 +42,7 @@ int main (int argc, char* argv[]) {
   // the sake of simplicity.
   if (argc == 3) {
     // Assign the variables with the values from the command-line.
+    // Here we assume that the user provides non-negative integers.
     MAX = atoi(argv[1]); MAXNUMBER = atoi(argv[2]);
  
   // Detect the help flag to prompt the user with the expected usage of the
