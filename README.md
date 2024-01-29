@@ -1,9 +1,12 @@
-## Flow
+## Submission format
 
-All team members have a branch they can work on individually, namely
-`<X>-branch`, where `X` is the initial of their first name. The `main` branch
-will contain the **solution** that will be later turned in.
+The directory structure of our submission is the following:
 
-Note: in case it's required, additional branches can be created, and the
-features of `GitLab` (issues, merge requests, etc.) can be used, although
-this is not mandatory.
+```
+ex1/main.c      # main file for exercise 1
+ex2/main.c      # main file for exercise 2
+ex3/main.c      # main file for exercise 3
+ex4/bin2hec.c   # the first program for exercise 4
+ex4/dec2bin.c   # the second program for exercise 4
+ex5/main.c      # main file for exercise 5
+```
