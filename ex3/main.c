@@ -7,7 +7,7 @@
 typedef struct {
     char firstname[20];
     char famname[20];
-    char pers_number[13]; // yyyymmddnnnc
+    char pers_number[13];   // yyyymmddnnnc
 } PERSON;
 
 // function declarations
@@ -20,11 +20,14 @@ void search_by_name(char searchChoice, char *name); // prints out the person if 
 void printfile(void);                               // prints out all persons in the file
 
 int main(void) {
-    PERSON ppost;
-    char taskChoice;
-    char searchChoice;
-    char searchInput[20];
 
+    // variable declarations
+    PERSON ppost;                                   // variable to store temporary person struct
+    char taskChoice;                                // variable storing user input denoting which task is to be run
+    char searchChoice;                              // variable storing user input denoting whether the search for person is by first or family name
+    char searchInput[20];                           // variable storing user input denoting name String to search for
+
+    // print the task choices
     printf("-----------------------------\n");
     printf("Welcome to Exercise 3! \n");
     printf("1. Create a new and delete the old file.\n");
@@ -33,18 +36,25 @@ int main(void) {
     printf("4. Print out all in the file.\n");
     printf("5. Exit the program.\n");
 
+    // single loop represents one task selection
+    // loop continues until 'Exit the program' is chosen (input '5')
     do {
+        // print divider line to make output more readable and prompt user to select task
         printf("-----------------------------\n");
         printf("Please choose an option between 1 and 5: ");
 
+        // record user input denoting choice of task to run
         taskChoice = getchar();
 
+        // switch case depending on user input
         switch(taskChoice) {
             case '1':
+                // dummy data to be stored as first entry in 
                 ppost = (PERSON){"Duke", "Nukem", "199409021234"};
 
                 write_new_file(&ppost);
 
+                // exit the switch block after case is executed
                 break;
 
             case '2':
@@ -52,6 +62,7 @@ int main(void) {
 
                 append_file(&ppost);
 
+                // exit the switch block after case is executed
                 break;
 
             case '3':
@@ -74,52 +85,73 @@ int main(void) {
 
                 printf("Please type name: ");
 
+                //fgets
                 scanf("%19s", searchInput);
 
                 search_by_name(searchChoice, searchInput);
 
+                // exit the switch block after case is executed
                 break;
 
             case '4':
                 printfile();
 
+                // exit the switch block after case is executed
                 break;
 
             case '5':
                 printf("Thank you for using our program.\n");
                 
+                // exit the switch block after case is executed
                 break;
 
+            // if input is anything other than chars 1-5
             default:
+                // print negative message
                 printf("Invalid input.\n");
                 
+                // exit the switch block after case is executed
                 break;
         }
 
+    // ensure buffer isn't cleared if user input only contains a single \n
+    // this is relevant when the user presses ENTER with no other characters
     if(taskChoice != '\n') {
+
+        // clears the buffer to ensure no \n characters interfere with subsequent inputs
         clearBuffer();
     }
     
+    // loop the program, allowing user to keep selecting tasks until they select to close the program
     } while(taskChoice != '5');
 
+    // return exit code signifying program success
     return 0;
 }
 
-// https://stackoverflow.com/questions/7898215/how-can-i-clear-an-input-buffer-in-c
+// clears the buffer to ensure no \n characters interfere with subsequent inputs
+// adapted from https://stackoverflow.com/questions/7898215/how-can-i-clear-an-input-buffer-in-c
 void clearBuffer() {
+
+    // declare temporary character
     int c;
+
+    // consume consecutive haracters from buffer in a loop until encountering \n or end of file
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void write_new_file(PERSON *inrecord) {     // creates file and writes the first record 
+// create file and write the first record
+// takes PERSON pointer containing dummy data
+void write_new_file(PERSON *inrecord) {   
     FILE *fileptr;
     
-    // attempt to open a file named bin.dat in binary write mode ("wb")
+    // attempt to open a file named persons.bin in binary write mode ("wb")
     if((fileptr=fopen("persons.bin","wb")) == NULL) {
         printf("Cannot create the file\n");
         exit(1);
     }
 
+    
     fwrite(inrecord, sizeof(PERSON), 1, fileptr);
 
     fclose(fileptr);
@@ -132,15 +164,15 @@ PERSON input_record(void) {
     PERSON tempRecord = (PERSON){};
 
     printf("Please enter first name: ");
-    scanf("%19s", tempRecord.firstname);
+    scanf("%19s", tempRecord.firstname);    //fgets
     clearBuffer();
 
-    printf("Please enter second name: ");
-    scanf("%19s", tempRecord.famname);
+    printf("Please enter family name: ");
+    scanf("%19s", tempRecord.famname);  //fgets 
     clearBuffer();
 
     printf("Please enter personal number: ");
-    scanf("%12s", tempRecord.pers_number);
+    scanf("%12s", tempRecord.pers_number);  //fgets
 
     return tempRecord;
 };
@@ -148,7 +180,7 @@ PERSON input_record(void) {
 void append_file(PERSON *inrecord) {
     FILE *fileptr;
     
-    // attempt to open a file named bin.dat in binary append mode ("ab")
+    // attempt to open a file named persons.bin in binary append mode ("ab")
     if((fileptr=fopen("persons.bin","a+b")) == NULL) {
         printf("Cannot create the file\n");
         exit(1);
@@ -166,7 +198,7 @@ void search_by_name(char searchChoice, char *name) {
     PERSON tempRecord;
     bool entryFound = false;
 
-    // attempt to open a file named bin.dat in binary read mode ("rb")
+    // attempt to open a file named persons.bin in binary read mode ("rb")
     if((fileptr=fopen("persons.bin","rb")) == NULL) {
         printf("Cannot create the file\n");
         exit(1);
