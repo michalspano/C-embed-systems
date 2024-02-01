@@ -16,8 +16,7 @@ void clearBuffer(void);
 void write_new_file(PERSON *inrecord);              // creates file and writes the first record
 PERSON input_record(void);                          // reads a person's record
 void append_file(PERSON *inrecord);                 // appends a new person to the file
-void search_by_name(char searchChoice, char *name); // prints out the person if in list based on first name attribute
-void search_by_famname(char *name);                 // prints out the person if in list based on last name attribute
+void search_by_name(char searchChoice, char *name); // prints out the person if in list
 void printfile(void);                               // prints out all persons in the file
 
 int main(void) {
@@ -106,7 +105,7 @@ int main(void) {
     return 0;
 }
 
-
+// https://stackoverflow.com/questions/7898215/how-can-i-clear-an-input-buffer-in-c
 void clearBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
