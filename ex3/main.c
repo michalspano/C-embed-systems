@@ -16,7 +16,7 @@ void clearBuffer(void);
 void write_new_file(PERSON *inrecord);              // creates file and writes the first record
 PERSON input_record(void);                          // reads a person's record
 void append_file(PERSON *inrecord);                 // appends a new person to the file
-void search_by_name(char searchChoice, char *name); // prints out the person if in list
+bool search_by_name(char *name);                    // prints out the person if in list
 void printfile(void);                               // prints out all persons in the file
 
 int main(void) {
@@ -24,8 +24,9 @@ int main(void) {
     // variable declarations
     PERSON ppost;                                   // variable to store temporary person struct
     char taskChoice;                                // variable storing user input denoting which task is to be run
-    char searchChoice;                              // variable storing user input denoting whether the search for person is by first or family name
+    char searchChoice;                              // variable storing user input denoting whether to keep searching for person
     char searchInput[20];                           // variable storing user input denoting name String to search for
+    bool entryFound;
 
     // print the task choices
     printf("-----------------------------\n");
@@ -66,30 +67,34 @@ int main(void) {
                 break;
 
             case '3':
-                clearBuffer();
-                
-                printf("Search by first name or family name?\n");
-                printf("1. First name.\n");
-                printf("2. Family name.\n");
-
-                printf("Please type your choice: ");
-
-                searchChoice = getchar();
-
-                while(searchChoice != '1' && searchChoice != '2') {
-                    printf("Invalid input. Please choose between 1 or 2: ");
-
+                do {
                     clearBuffer();
-                    searchChoice = getchar();
-                }
 
-                printf("Please type name: ");
+                    printf("Please type name to search: ");
 
-                //fgets
-                scanf("%19s", searchInput);
+                    //fgets
+                    scanf("%19s", searchInput);
 
-                search_by_name(searchChoice, searchInput);
+                    entryFound = search_by_name(searchInput);
 
+                    if(!entryFound) {
+
+                        clearBuffer();
+                        printf("Try again? (Y/N): ");
+
+                        searchChoice = getchar();
+                        
+                        while(searchChoice != 'N' && searchChoice != 'n' &&
+                              searchChoice != 'Y' && searchChoice != 'y') {
+
+                            printf("Invalid input. Please choose Y or N: ");
+
+                            clearBuffer();
+                            searchChoice = getchar();
+                        }
+                    }
+                } while (searchChoice == 'Y' || searchChoice == 'y' && entryFound != true);
+        
                 // exit the switch block after case is executed
                 break;
 
@@ -151,7 +156,6 @@ void write_new_file(PERSON *inrecord) {
         exit(1);
     }
 
-    
     fwrite(inrecord, sizeof(PERSON), 1, fileptr);
 
     fclose(fileptr);
@@ -181,7 +185,7 @@ void append_file(PERSON *inrecord) {
     FILE *fileptr;
     
     // attempt to open a file named persons.bin in binary append mode ("ab")
-    if((fileptr=fopen("persons.bin","a+b")) == NULL) {
+    if((fileptr=fopen("persons.bin","ab")) == NULL) {
         printf("Cannot create the file\n");
         exit(1);
     }
@@ -193,7 +197,7 @@ void append_file(PERSON *inrecord) {
     printf("Person successfully recorded in file.\n");
 }
 
-void search_by_name(char searchChoice, char *name) {
+bool search_by_name(char *name) {
     FILE *fileptr;
     PERSON tempRecord;
     bool entryFound = false;
@@ -219,8 +223,7 @@ void search_by_name(char searchChoice, char *name) {
         // if it fails to read an element (e.g. by reaching end of file), it returns 0
         while (fread(&tempRecord, sizeof(PERSON), 1, fileptr) == 1) {
 
-            if (searchChoice == '1' && strcmp(tempRecord.firstname, name) == 0 ||
-                searchChoice == '2' && strcmp(tempRecord.famname, name) == 0) {
+            if (strcmp(tempRecord.firstname, name) == 0 || strcmp(tempRecord.famname, name) == 0) {
                 entryFound = true;
                 printf("-----------------------------\n");
                 printf("First Name: %s\n", tempRecord.firstname);
@@ -231,7 +234,9 @@ void search_by_name(char searchChoice, char *name) {
 
         if(entryFound == false) {
             printf("No matching entries found.\n");
+            return false;
         }
+        return true;
     }
 
     fclose(fileptr);
