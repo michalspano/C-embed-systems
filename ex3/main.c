@@ -377,6 +377,7 @@ bool search_by_name(char *name) {
     fclose(fileptr);
 }
 
+// print out all persons in the file
 void printfile(void) {  
 
     // variable declarations
