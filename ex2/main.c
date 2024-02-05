@@ -107,14 +107,14 @@ REGTYPE* random_list() {
  */
 REGTYPE* add_first(REGTYPE* temp, int data) {
   REGTYPE *n = malloc(sizeof(REGTYPE)); // Dynamically allocate one Node on the heap,
-                                  // retain its pointer.
-  n->number = data;               // Set the `number` parameter to provided data.
-  n->next   = temp;               // Assign `temp`'s pointer as the `next` of
-                                  // the new node.
-  temp->prev = n;                 // Assign `temp`'s previous node as the newly
-                                  // created node.
+                                        // retain its pointer.
+  n->number = data; // Set the `number` parameter to provided data.
+  n->next   = temp; // Assign `temp`'s pointer as the `next` of
+                    // the new node.
+  temp->prev = n;   // Assign `temp`'s previous node as the newly
+                    // created node.
 
- return n;                        // Return a pointer to the new node (i.e., the new 'head')
+ return n;          // Return a pointer to the new node (i.e., the new 'head')
 }
 
 /**
