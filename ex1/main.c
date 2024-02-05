@@ -2,6 +2,7 @@
 // Work package 2
 // Exercise 1 
 // Submission code: 5129972
+
 // Includes section
 #include <stdio.h>
 #include <string.h>
@@ -9,6 +10,7 @@
 // Macros section
 #define POS_MAX 99  // The maximum allowed value for x, y
 #define DIR_COUNT 4 // The number of direction
+// A formatted message with the instructions of the program.
 #define HELP_MSG "Write 'm' to move (by 1 unit) or 't' to"\
                  " turn (by 90deg clockwise) the robot."\
                  "\nThese command are chained in a sequence,"\
@@ -27,6 +29,7 @@ typedef struct {
 // Function prototypes
 void move(ROBOT *r);
 void turn(ROBOT *r);
+void clearBuffer(void);
 
 /**
  * Main program section. The program does not use any command-line arguments
@@ -35,6 +38,7 @@ void turn(ROBOT *r);
 int main(void) {
   int x, y;                // Declare placeholders for x, y values read from the
                            // user.
+  char loop_flag;          // A char to determine if the program is to be exited.
   char line[256];          // Declare a buffer for one line with at most 256 chars.
 
   // Prompt the user, explain the program (in a readable and pleasant manner).
@@ -74,6 +78,7 @@ int main(void) {
     // Attempt to read one line (i.e., 256 chars) from stdin. The width specified does not
     // include the null-terminator. The user is prompted to enter a command.
     printf("> "); scanf("%255s", line);
+    clearBuffer(); // Consume all remaining characters in the buffer.
 
     // Iterate over each character in the line buffer.
     for (int i = 0; i < strlen(line); i++) {
@@ -89,17 +94,14 @@ int main(void) {
     // Display to the user the updated position of the robot.
     printf("New position: [%d, %d]\n\n", rbt.xpos, rbt.ypos);
 
-    // Ask the user if they want to continue a new round. Populate the line
-    // with the user's entry. Arbitrary 15 chars (+null terminator) are
-    // provided by the user. There may be less more error-prone way to do this,
-    // but for the sake of simplicity, we assume that the user will not enter
-    // more than 15 characters.
-    printf("Continue? [y/n]: "); scanf("%15s", line);
+    // Ask the user if they want to continue a new round. If the user enters 'n',
+    // the program will exit. Otherwise, the program will continue.
+    printf("Continue? [y/n]: ");
 
-    // Detect 'n' or "no", so the main loop body is exited.
-    // These are two flags that are used to exit the program.
-    // This check is case-sensitive.
-  } while ((line[0] != 'n' && strcmp(line, "no") != 0));
+    // Read a character from the user, consume all remaining characters in the
+    // buffer.
+    loop_flag = getchar(); clearBuffer();
+  } while (loop_flag != 'n'); // Continue until the user enters 'n'.
 
   // The user has indicated to exit the program. The program returns 0 to
   // indicate a success. 
@@ -144,3 +146,11 @@ void turn(ROBOT *r) {
   r->dir++; r->dir %= DIR_COUNT;
 }
 
+/**
+ * A helper subroutine to clear the remaining characters in the buffer.
+ */
+void clearBuffer(void) {
+  // Read all characters in the buffer, consume them, terminate when the whole
+  // buffer is read or a newline character is encountered.
+  char c; while ((c = getchar()) != EOF && c != '\n');
+}
