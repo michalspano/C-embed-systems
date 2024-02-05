@@ -37,7 +37,6 @@ int main(void) {
   int x, y;                // Declare placeholders for x, y values read from the
                            // user.
   char line[256];          // Declare a buffer for one line with at most 256 chars.
-  _Bool toLoop = 1;        // A flag to indicate if a new round is to be carried out.
 
   // Prompt the user, explain the program (in a readable and pleasant manner).
   printf("\n\t\t\t\t***ROBOT***\n");
@@ -92,13 +91,16 @@ int main(void) {
     printf("New position: [%d, %d]\n\n", rbt.xpos, rbt.ypos);
 
     // Ask the user if they want to continue a new round. Populate the line
-    // with at most 2 chars (to detect 'n' or "no").
-    printf("Continue? [y/n]: "); scanf("%2s", line);
+    // with the user's entry. Arbitrary 15 chars (+null terminator) are
+    // provided by the user. There may be less more error-prone way to do this,
+    // but for the sake of simplicity, we assume that the user will not enter
+    // more than 15 characters.
+    printf("Continue? [y/n]: "); scanf("%15s", line);
 
     // Detect 'n' or "no", so the main loop body is exited.
-    if (line[0] == 'n' || strcmp(line, "no") == 0) toLoop = 0;
-
-  } while (toLoop); // Continue the loop until EOF is found.
+    // These are two flags that are used to exit the program.
+    // This check is case-sensitive.
+  } while ((line[0] != 'n' && strcmp(line, "no") != 0));
 
   // The user has indicated to exit the program. The program returns 0 to
   // indicate a success. 
