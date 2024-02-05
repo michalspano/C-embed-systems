@@ -114,8 +114,7 @@ int main(void) {
                     entryFound = search_by_name(searchInput);
 
                     // if the search function yielded no matching results
-                    if(!entryFound) {
-
+                    if (!entryFound) {
                         // clear input buffer to ensure no leftover \n
                         clearBuffer();
 
@@ -124,20 +123,6 @@ int main(void) {
 
                         // capture user input denoting whether user wishes to search again or return to program menu ('Y' or 'N' respectively)
                         searchChoice = getchar();
-                        
-                        // as long as user does not submit valid input (lowercase or uppercase 'Y' or 'N' character), stay within below loop
-                        while(searchChoice != 'N' && searchChoice != 'n' &&
-                              searchChoice != 'Y' && searchChoice != 'y') {
-
-                            // print message to prompt user to submit a valid input
-                            printf("Invalid input. Please choose Y or N: ");
-
-                            // clear input buffer to ensure no leftover \n
-                            clearBuffer();
-
-                            // recapture user input denoting whether user wishes to search again or return to program menu ('Y' or 'N' respectively)
-                            searchChoice = getchar();
-                        }
                     }
 
                 // repeat loop if search yielded no matches and user has chosen to search again ('Y' input)
@@ -176,7 +161,7 @@ int main(void) {
 
     // check if user input contains only a single \n; if so, input buffer should not be cleared
     // this is relevant when the user inputs ENTER with no other characters
-    if(taskChoice != '\n') {
+    if (taskChoice != '\n') {
 
         // clears the buffer to ensure no \n characters interfere with subsequent inputs
         clearBuffer();
@@ -200,7 +185,7 @@ void clearBuffer() {
 // checks if a file is empty
 // takes file pointer as a parameter and returns a boolean
 bool isEmpty(FILE *fileptr) {
-
+    bool isEmpty = false; // a boolean flag to determine the state
     // start by setting file pointer to the end of the file using SEEK_END reference point
     // 0 denotes no offset from the reference point
     fseek(fileptr, 0, SEEK_END);
@@ -213,16 +198,16 @@ bool isEmpty(FILE *fileptr) {
         // print relevant message
         printf("The file is empty. \n");
 
-        // return true denoting file is empty
-        return true;
+        // Assign the flag accordingly
+        isEmpty = true;
     }
 
     // move the file pointer back to the beginning of the file using SEEK_SET reference point
     // 0 denotes no offset from the reference point
     fseek(fileptr, 0, SEEK_SET);
 
-    // return false denoting file is not empty
-    return false;
+    // return the boolean flag
+    return isEmpty;
 }
 
 // create file and write the first record
@@ -300,7 +285,7 @@ void append_file(PERSON *inrecord) {
     if((fileptr=fopen("persons.bin","ab")) == NULL) {
 
         // if the file opening fails, print an error message 
-        printf("Cannot create the file\n");
+        printf("Cannot open the file\n");
 
         // exit the program with status code 1 denoting unsuccessful program execution
         exit(1);
@@ -332,7 +317,7 @@ bool search_by_name(char *name) {
     if((fileptr=fopen("persons.bin","rb")) == NULL) {
 
         // if the file opening fails, print an error message 
-        printf("Cannot create the file\n");
+        printf("Cannot open the file\n");
 
         // exit the program with status code 1 denoting unsuccessful program execution
         exit(1);
@@ -387,7 +372,7 @@ void printfile(void) {
     if((fileptr=fopen("persons.bin","rb")) == NULL) {
 
         // if the file opening fails, print an error message 
-        printf("Cannot create the file\n");
+        printf("Cannot open the file\n");
 
         // exit the program with status code 1 denoting unsuccessful program execution
         exit(1);
