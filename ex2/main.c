@@ -11,27 +11,28 @@
 // Macros section
 #define INIT_SIZE 5 // The number of nodes in the initial state.
 #define MAX_VAL 100 // The highest possible value in the initial random
-                    // computation of a linked list.
+                    // computation of a linked list (MAX in the template).
 
 // Type definitions
 
 // A doubly-linked list abstraction.
-typedef struct n {
+typedef struct q {
   int number;     // An int value that the node holds.
-  struct n *next; // A pointer to the next node.
-  struct n *prev; // A pointer to the previous node.
-} Node; // Initially REGTYPE, for the sake of readability, remapped to 'Node'.
+  struct q *next; // A pointer to the next node.
+  struct q *prev; // A pointer to the previous node.
+} REGTYPE;
 
 // Function prototypes (API)
-int random_int();                      // Generate random int in a range.
-Node* random_list(void);               // Generate a random linked list given properties.
-void freeLinkedList(Node* head);       // Free memory occupied by a linked list.
-void printLinkedList(Node *head);      // Print the values of a linked list.
-Node* add_first(Node* temp, int data); // Add a new node to the topmost
-                                       // position of a linked list.
+int random_int(void);                        // Generate random int in a range.
+REGTYPE* random_list(void);                  // Generate a random linked list given properties.
+void freeLinkedList(REGTYPE *head);          // Free memory occupied by a linked list.
+void printLinkedList(REGTYPE *head);         // Print the values of a linked list.
+REGTYPE* add_first(REGTYPE* temp, int data); // Add a new node to the topmost position of a linked list.
 
 /**
  * Main program section. The program does not use any command-line arguments.
+ * The program uses additional subroutines, so it uses a different structure
+ * than the provided template.
  */
 int main(void) {
   srand(time(0)); // Reset the seed to achieve pseudo-random values given each
@@ -39,7 +40,7 @@ int main(void) {
 
   // Initial computation of a linked list with values ranging from
   // [0, MAX_VAL].
-  Node* head = random_list();
+  REGTYPE* head = random_list();
 
   // Manually add some integers to the computed linked list (test).
   // Replace by 1 to allow.
@@ -66,14 +67,14 @@ int main(void) {
  * @see random_int()
  * @returns - a pointer to the head of the newly created linked list.
  */
-Node* random_list() {
+REGTYPE* random_list() {
   // Declare pointers of type Node that will be used in the function.
-  Node *top, *old, *item;
+  REGTYPE *top, *old, *item;
 
   // Reserve memory for the topmost node from the list. This is required
   // outside the loop, since the `old` pointer will be used to store the
   // previous node from the list.
-  top = malloc(sizeof(Node));
+  top = malloc(sizeof(REGTYPE));
 
   old = top;                  // Store the pointer to `old` (will be
                               // significant in the loop's body).
@@ -82,8 +83,8 @@ Node* random_list() {
 
   // Iterate `INIT_SIZE` times in a for-loop.
   for (int i = 0; i < INIT_SIZE - 1; i++) {
-    item = malloc(sizeof(Node)); // Reserve memory for a new Node assigned to item.
-    item->number = random_int(); // Add a randomly computed int to the item.
+    item = malloc(sizeof(REGTYPE)); // Reserve memory for a new Node assigned to item.
+    item->number = random_int();    // Add a randomly computed int to the item.
   
     old->next = item; // Make the previous node have it's `next` pointer to the
                       // current item.
@@ -104,8 +105,8 @@ Node* random_list() {
  * @returns - the new head from the linked list, that is, a pointer to the
  * newly inserted node.
  */
-Node* add_first(Node* temp, int data) {
-  Node *n = malloc(sizeof(Node)); // Dynamically allocate one Node on the heap,
+REGTYPE* add_first(REGTYPE* temp, int data) {
+  REGTYPE *n = malloc(sizeof(REGTYPE)); // Dynamically allocate one Node on the heap,
                                   // retain its pointer.
   n->number = data;               // Set the `number` parameter to provided data.
   n->next   = temp;               // Assign `temp`'s pointer as the `next` of
@@ -122,13 +123,13 @@ Node* add_first(Node* temp, int data) {
  *
  * @param head - a pointer to the first node of the linked list (i.e., the 'head').
  */
-void printLinkedList(Node* head) {
-  int i = 1; // Display the values with an index
+void printLinkedList(REGTYPE* head) {
+  int nr = 1; // Display the values with an index
 
   // Continue while the head is not null.
   while (head != NULL) {
     // Print the value from the node, increment i.
-    printf("Post nr %d: %d\n", i++, head->number);
+    printf("Post nr %d: %d\n", nr++, head->number);
     head = head->next; // Update the current 'head' pointer by the consecutive
                        // entry.
   }
@@ -138,8 +139,8 @@ void printLinkedList(Node* head) {
  * A subroutine to free the whole sequence of a given linked List.
  * @param head - a pointer to the first node of the linked list (i.e., the 'head').
  */
-void freeLinkedList(Node* head) {
-  Node *tmp = head; // Create a temporary copy of the head.
+void freeLinkedList(REGTYPE* head) {
+  REGTYPE *tmp = head; // Create a temporary copy of the head.
 
   // Proceed to iterate until the end of the list is reached.
   while ((tmp = head) != NULL) {
