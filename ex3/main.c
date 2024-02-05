@@ -1,4 +1,6 @@
 /**
+* (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
+*
 * This program presents a menu from which the user can select one of four subroutines.
 * The first creates a new binary file and fills it with dummy data (replacing previous file if it exists).
 * The second allows the user to append a new person entry to the file (using user input to populate the attributes).
@@ -7,9 +9,8 @@
 * The fifth option exits the program.
 * 
 * Purpose: to demonstrate basic knowledge of writing and reading binary files in C.
-* DIT633
 * 
-* Authors: Group 5, 2024
+* Submission code: 5129972
 **/
 
 #include <stdlib.h>     // header for standard library necessary exit() function
