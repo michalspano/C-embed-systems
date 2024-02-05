@@ -140,7 +140,7 @@ int main(void) {
                     }
 
                 // repeat loop if search yielded no matches and user has chosen to search again ('Y' input)
-                } while (searchChoice == 'Y' || searchChoice == 'y' && entryFound != true);
+                } while (searchChoice == 'Y' || searchChoice == 'y' && !entryFound);
         
                 // exit the switch block after case is executed
                 break;
@@ -338,7 +338,7 @@ bool search_by_name(char *name) {
     }
 
     // check if file is empty; if not, proceed with subroutine
-    if (isEmpty(fileptr) == false) {
+    if (!isEmpty(fileptr)) {
 
         // iterate through and read each record until the end of the file
         // if fread successfully reads one PERSON element, it returns 1
@@ -360,7 +360,7 @@ bool search_by_name(char *name) {
         }
 
         // if no matching person entries were found in file
-        if(entryFound == false) {
+        if(!entryFound) {
 
             // print negative message
             printf("No matching entries found.\n");
@@ -396,7 +396,7 @@ void printfile(void) {
     }
 
     // check if file is empty; if not, proceed with subroutine
-    if (isEmpty(fileptr) == false) {
+    if (!isEmpty(fileptr)) {
 
         // iterate through and read record until the end of the file
         // if fread successfully reads one PERSON element, it returns 1 and continues looping
