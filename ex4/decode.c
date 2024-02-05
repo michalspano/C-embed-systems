@@ -6,11 +6,9 @@
 // Include section
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // Macro section
-#define MAX_VALUE 0xCB // max possible value for a vehicle configuration
-#define MIN_VALUE 0x0  // min possible value for a vehicle configuration
-
 #define BIT1 0x01    //00000001
 #define BIT2 0x02    //00000010
 #define BIT3 0x04    //00000100
@@ -19,8 +17,6 @@
 #define BIT6 0x20    //00100000
 #define BIT7 0x40    //01000000
 #define BIT8 0x80    //10000000
-
-#define NUM_OF_PARTS 5 // number of vehicle parts
 
 // start bit position of each vehicle part
 #define ENGINE 7  // starting bit position of the engine
@@ -35,11 +31,19 @@
 #define KEY_MAX 2
 #define BRAKE_MAX 1
 
+// max input length of the given hexadecimal number
+#define MAX_INPUT_LEN 2
+
 // Type definition(s)
 typedef unsigned char byte;   // one 'byte' (8 bits)
 
-// Function prototype declaration(s)
-void printBinary(byte number); // TODO remove
+struct Vehicle {  // struct containing all the vehicle part configurations
+   byte engine;
+   byte gear;
+   byte key;
+   byte brake1;
+   byte brake2;
+};
 
 
 // Main program section
@@ -47,14 +51,16 @@ int main(int argc, char **argv) {
    // Variable declarations
    long input;    // stores the hexadecimal input 
    
-   byte *endPtr;  // points to the last character strtol can't convert
+   char *endPtr;  // points to the last character strtol can't convert
 
    byte vehicleConfig;  // vehicle configuration converted from the input
+
+   struct Vehicle vehicle; // struct storing each individual vehicle part configuration
 
    // Program logic
    printf("<< Program Start >>\n\n");
 
-   // check that the amount of command-line arguments are correct (exactly 5)
+   // check that the amount of command-line arguments are correct (exactly 1)
    if (argc != 2) {
       // show error message and usage hint
       printf("Error: please provide exactly 1 command-line argument!\n");
@@ -64,8 +70,21 @@ int main(int argc, char **argv) {
       return 1;
    }
 
+   // since we pack the value of the given hexadecimal into a byte, it can at most be of length two 
+   // as the value of the hexadecimal number would otherwise be greater than what fits into a single byte
+   // Note: this prevents unwanted behaviour where a hexadecimal number that is too big would be accepted
+   // as long as the last two hexadecimal "digits" represent a valid vehicle config (e.g. AAB). 
+   // This allows us to inform the user, and keep the program functionality consistent.
+   if (strlen(argv[1]) != MAX_INPUT_LEN) {
+      // show error message and usage hint
+      printf("Error: input hexadecimal can at most be of length %d!\n", MAX_INPUT_LEN);
+
+      // exit program early with error code 1
+      return 1;
+   }
+
    // convert the input argument to a byte 
-   input = strtol(argv[1], (char **)&endPtr, 0x10);   // Note: we pass base 16 to read hexadecimal
+   input = strtol(argv[1], &endPtr, 16);   // Note: we pass base 16 to read hexadecimal
 
    // if the end pointer returned by the strtol function does not point to a value of 0, then the
    // argument was not successfully converted, meaning the input was not a valid hexadecimal number
@@ -75,82 +94,67 @@ int main(int argc, char **argv) {
       return 1;
    }
 
-   // check if the input value is greater than the max possible configuration value
-   // or lower than the minimum possible configuration value
-   if (input > MAX_VALUE || input < MIN_VALUE) {
-      printf("Error: value of input argument is out-of-bounds!\n");
-      printf("> Min possible configuration is \"0x00\"\n");
-      printf("> Max possible configuration is \"0xCB\"\n");
-
-      // exit program early with error code 1 
-      return 1;
-   }
-
-   // input was successfully read and is within the lower and upper bounds
-   // convert it to byte
+   // input was successfully read - convert it to byte
    vehicleConfig = (byte)input;
 
+   // Now we check that the values for values for each part configuration are within bounds.
+   // We do this by right-shifting the configuration (input value) by the starting bit position of each part
+   // and applying a bitmask corresponding to the number of bits that this part's config is represented by.
 
-   // now check that the bounds for the range of specific parts are valid
+   // Note: technically, the parts that are represented with just one bit can't be higher than the max, as they 
+   // are only 0 or 1, but by including these checks we ensure that any future changes are easily accommodated
+   // by modifying existing code rather than introducing more/new logic.
 
-   // check that the gear values is not higher than its max range
-   if ((vehicleConfig >> GEAR & (BIT3 + BIT2 + BIT1)) > GEAR_MAX) {
+   // assign the engine value to the struct and check that is not higher than the max range
+   if ((vehicle.engine = (vehicleConfig >> ENGINE & BIT1)) > ENGINE_MAX) {
       printf("Error: invalid input!\n");
-      printf("> Gear position can only be between 0-4\n");
+      printf("> Engine position can only be between (0-%d)\n", ENGINE_MAX);
 
       // exit program early with error code 1
       return 1;
    }
-   // check that the key value is not higher than its max range
-   if ((vehicleConfig >> KEY & (BIT2 + BIT1)) > KEY_MAX) {
+   // assign the gear value to the struct and check that it is not higher than the max range
+   if ((vehicle.gear = (vehicleConfig >> GEAR & (BIT3 + BIT2 + BIT1))) > GEAR_MAX) {
       printf("Error: invalid input!\n");
-      printf("> Key position can only be between 0-2\n");
+      printf("> Gear position can only be between (0-%d)\n", GEAR_MAX);
 
       // exit program early with error code 1
       return 1;
    }
+   // assign the key value to the struct and check that it is not higher than the max range
+   if ((vehicle.key = (vehicleConfig >> KEY & (BIT2 + BIT1))) > KEY_MAX) {
+      printf("Error: invalid input!\n");
+      printf("> Key position can only be between (0-%d)\n", KEY_MAX);
 
-   // control prints //TODO remove
-   printf("raw value: %d\n", input);
-   printBinary(input);
-   printf("converted value: %d\n", vehicleConfig);
-   printBinary(vehicleConfig);
-   
+      // exit program early with error code 1
+      return 1;
+   }
+   // assign the brake1 value to the struct and check that it is not higher than the max range
+   if ((vehicle.brake1 = (vehicleConfig >> BRAKE1 & BIT1)) > BRAKE_MAX) {
+      printf("Error: invalid input!\n");
+      printf("> Brake1 position can only be between (0-%d)\n", BRAKE_MAX);
+
+      // exit program early with error code 1
+      return 1;
+   }
+   // assign the brake2 value to the struct and check that it is not higher than the max range
+   if ((vehicle.brake2 = (vehicleConfig >> BRAKE2 & BIT1)) > BRAKE_MAX) {
+      printf("Error: invalid input!\n");
+      printf("> Brake2 position can only be between (0-%d)\n", BRAKE_MAX);
+
+      // exit program early with error code 1
+      return 1;
+   }
 
    // print the unpacked byte values
-   printf("\nName         Value\n");
+   printf("Name         Value\n");
    printf("------------------\n");
-   printf("engine_on    %d\n", vehicleConfig & BIT8 >> ENGINE);
-   printf("gear_pos     %d\n", (vehicleConfig & (BIT7 + BIT6 + BIT5)) >> GEAR);
-   printf("key_pos      %d\n", (vehicleConfig & (BIT4 + BIT3)) >> KEY);
-   printf("brake1       %d\n", vehicleConfig & BIT2 >> BRAKE1);
-   printf("brake2       %d\n", vehicleConfig & BIT1 >> BRAKE2);
+   printf("engine_on    %d\n", vehicle.engine);
+   printf("gear_pos     %d\n", vehicle.gear);
+   printf("key_pos      %d\n", vehicle.key);
+   printf("brake1       %d\n", vehicle.brake1);
+   printf("brake2       %d\n", vehicle.brake2);
 
    // exit program with code 0 for success
    return 0;
-}
-
-// Subroutine definition(s)
-
-// TODO: remove
-void printBinary(byte number) {
-   const byte BYTE_MASK = 1 << 7;     // byte bitmask containing a 1 in the leftmost bit
-   // print the binary representation of the byte by checking
-   // each individual bit and printing 1 or 0 (only non-leading 0's) 
-   printf("Vehicle: 0b");
-   // we loop through each individual bit of the byte (left>right)
-   // by left-shifting the byte and applying a bitmask using bitwise AND,
-   // hence checking whether the current leftmost bit is 1 or 0
-   for (byte i = 0; i < sizeof(byte) * 8; i++) {
-      // left-shift by i positions and apply the bitmask
-      // if the most significant bit is 1, we get a non-zero value
-      // and the if-statement evaluates to true
-      if (number << i & BYTE_MASK) {
-         putchar('1');
-      } else {
-         putchar('0');
-      }
-   }
-   // print new line after loop is finished
-   putchar('\n');
 }
