@@ -358,23 +358,20 @@ bool search_by_name(char *name) {
                 printf("Personal Number: %s\n", tempRecord.pers_number);
             }
         }
-
-        // if no matching person entries were found in file
-        if(!entryFound) {
-
-            // print negative message
-            printf("No matching entries found.\n");
-
-            // return boolean denoting failure to find matching person
-            return false;
-        }
-
-        // if matching person entry was found (entryFound flag was set to true), return true
-        return true;
     }
 
     // close the file
     fclose(fileptr);
+
+    // if no matching person entries were found in file
+    if(!entryFound) {
+        // print negative message
+        printf("No matching entries found.\n");
+    }
+
+    // If matching person entry was found (entryFound flag was set to true), return true.
+    // Otherwise, return false.
+    return entryFound;
 }
 
 // print out all persons in the file
