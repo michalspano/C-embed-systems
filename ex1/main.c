@@ -21,15 +21,15 @@ enum DIRECTION { N, E, S, W };
 
 // Definition of a robot (x, y and direction)
 typedef struct {
-  int xpos;
-  int ypos;
-  enum DIRECTION dir;
+  int xpos;           // The x position
+  int ypos;           // The y position
+  enum DIRECTION dir; // The current direction
 } ROBOT;
 
 // Function prototypes
-void move(ROBOT *r);
-void turn(ROBOT *r);
-void clearBuffer(void);
+void move(ROBOT *r);    // Move the robot in the direction by one unit.
+void turn(ROBOT *r);    // Turn the robot clockwise by 90 deg.
+void clearBuffer(void); // Clear chars from the buffer until new-line or EOF.
 
 /**
  * Main program section. The program does not use any command-line arguments
