@@ -1,2 +1,5 @@
 # Ignore created binary files
 *.bin
+
+# Ignore OSX binary
+*.DS_Store
