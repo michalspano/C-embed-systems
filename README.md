@@ -1,11 +1,13 @@
-# Submission Code: `5129972`
+## Submission format
 
-## Flow
+The directory structure of our submission is the following:
 
-All team members have a branch they can work on individually, namely
-`<X>-branch`, where `X` is the initial of their first name. The `main` branch
-will contain the **solution** that will be later turned in.
+```
+ex1/main.c    # main file for exercise 1
+ex2/main.c    # main file for exercise 2
+ex3/main.c    # main file for exercise 3
+ex4/code.c    # the first program for exercise 4
+ex4/decode.c  # the second program for exercise 4
+```
 
-Note: in case it's required, additional branches can be created, and the
-features of `GitLab` (issues, merge requests, etc.) can be used, although
-this is not mandatory.
+### Submission code: `5129972`
