@@ -18,7 +18,8 @@ void setup() {
 /* Program's loop body */
 void loop() {
   // Note: this blocks the button reading. Preferably, it should be extracted
-  // to a stand-alone construct.
+  // to a stand-alone construct. Solution: use non-blocking millis().
+  // Source: https://arduinogetstarted.com/faq/how-to-use-millis-instead-of-delay.
 
   digitalWrite(PIN_OUT[1], HIGH); // Light up LED
   millis(d_interval);              // Wait 0.5s
