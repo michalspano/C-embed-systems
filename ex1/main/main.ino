@@ -21,9 +21,9 @@ void loop() {
   // to a stand-alone construct.
 
   digitalWrite(PIN_OUT[1], HIGH); // Light up LED
-  delay(d_interval);              // Wait 0.5s
+  millis(d_interval);              // Wait 0.5s
   digitalWrite(PIN_OUT[1], LOW);  // Dim the LED
-  delay(d_interval);              // Wait 0.5s
+  millis(d_interval);              // Wait 0.5s
  
   // Read the state of the button at digital port 2.
   button_state = digitalRead(PIN_IN[0]);
@@ -32,5 +32,5 @@ void loop() {
   // button is not pressed.
   button_state == HIGH ? digitalWrite(PIN_OUT[0], HIGH)
                        : digitalWrite(PIN_OUT[0], LOW);
-  delay(10); // Add some small delay
+  millis(10); // Add some small delay
 }
