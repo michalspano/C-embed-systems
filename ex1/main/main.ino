@@ -20,11 +20,12 @@ void loop() {
   // Note: this blocks the button reading. Preferably, it should be extracted
   // to a stand-alone construct. Solution: use non-blocking millis().
   // Source: https://arduinogetstarted.com/faq/how-to-use-millis-instead-of-delay.
+  // FIXME: use millis() instead of delay().
 
   digitalWrite(PIN_OUT[1], HIGH); // Light up LED
-  millis(d_interval);              // Wait 0.5s
+  delay(d_interval);              // Wait 0.5s
   digitalWrite(PIN_OUT[1], LOW);  // Dim the LED
-  millis(d_interval);              // Wait 0.5s
+  delay(d_interval);              // Wait 0.5s
  
   // Read the state of the button at digital port 2.
   button_state = digitalRead(PIN_IN[0]);
@@ -33,5 +34,5 @@ void loop() {
   // button is not pressed.
   button_state == HIGH ? digitalWrite(PIN_OUT[0], HIGH)
                        : digitalWrite(PIN_OUT[0], LOW);
-  millis(10); // Add some small delay
+  delay(10); // Add some small delay
 }
