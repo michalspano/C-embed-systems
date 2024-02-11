@@ -3,6 +3,9 @@
 // Exercise 4
 // Submission code: <XXXYYY>
 
+// code has been adapted from example code by Mark Stanley & Alexander Brevig for the Keypad.h library
+// github repo: https://github.com/Chris--A/Keypad/blob/master/examples/CustomKeypad/CustomKeypad.ino
+
 // include section
 #include <Keypad.h>                     // include library for using matrix style keypads with Arduino
 
