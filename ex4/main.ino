@@ -4,15 +4,15 @@
 // Submission code: <XXXYYY>
 
 // define section
-#define NUM_ROW  4            // define number of rows on keypad
-#define NUM_COL  4            // define number of columns on keypad
+#define ROWS  4               // define number of rows on keypad
+#define COLS  4               // define number of columns on keypad
 #define SERIAL_BAUD_RATE 9600 // define baud rate for serial monitor
 #define DEBOUNCE_LIMIT 200    // define time (ms) required between key presses to register input 
                               // (used to debounce unwanted repeat inputs)
 
 // variable declarations
-const int row1 = 11;	      // digital pin for row 1
-const int col1 = 7;		      // digital pin for column 1
+const int ROW1 = 11;	      // digital pin for row 1
+const int COL1 = 7;           // digital pin for column 1
 
 unsigned long currentTime;    // variable tracking current time (to be compared against previous input time)
 unsigned long prevInputTime;  // variable tracking the previous time an input was registered 
@@ -20,7 +20,7 @@ unsigned long prevInputTime;  // variable tracking the previous time an input wa
 
 // multidimensional array represents keypad
 // values correspond to actual keypad's row/column configuration 
-const char keypad[4][4] = {
+const char keypad[ROWS][COLS] = {
     {'1', '2', '3', 'A'},
     {'4', '5', '6', 'B'},
     {'7', '8', '9', 'C'},
@@ -34,17 +34,17 @@ const char keypad[4][4] = {
 void setup() {
 
     // loop through rows
-    for(int row = 0; row <NUM_ROW; row++) {
+    for(int row = 0; row < ROWS; row++) {
 
         // configure pin representing current row as output pin
-        pinMode(row1 - row, OUTPUT);
+        pinMode(ROW1 - row, OUTPUT);
     }
 
     // loop through columns
-    for(int col = 0; col < NUM_COL; col++) {
+    for(int col = 0; col < COLS; col++) {
 
         // configure pin representing columns as input pin
-        pinMode(col1 - col, INPUT);
+        pinMode(COL1 - col, INPUT);
     }
   
     // setup serial monitor as output with defined baud rate
@@ -58,16 +58,16 @@ void setup() {
 void loop() {
 
     // loop through rows
-    for (int row = 0; row < NUM_ROW; row++) {
+    for (int row = 0; row < ROWS; row++) {
 
         // send a signal through current row
-        digitalWrite(row1 - row, LOW);
+        digitalWrite(ROW1 - row, LOW);
 
         // loop through columns
-        for (int col = 0; col < NUM_COL; col++) {
+        for (int col = 0; col < COLS; col++) {
 
             // read the current column and store signal in keySignal variable
-            int keySignal = digitalRead(col1 - col);
+            int keySignal = digitalRead(COL1 - col);
 
             // track current time 
             currentTime = millis();
@@ -86,6 +86,6 @@ void loop() {
         }
 
         // reset the current row
-        digitalWrite(row1 - row, HIGH);
+        digitalWrite(ROW1 - row, HIGH);
     }
 }
