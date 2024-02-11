@@ -1,6 +1,6 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 4
+// Exercise 3
 // Submission code: <XXXYYY>
 
 // define section
