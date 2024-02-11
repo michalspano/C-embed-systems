@@ -3,15 +3,11 @@
 // Exercise 4
 // Submission code: <XXXYYY>
 
-const int row1 = 11;	// digital pin for row 1
-const int row2 = 10;	// digital pin for row 2
-const int row3 = 9;		// digital pin for row 3
-const int row4 = 8;		// digital pin for row 4
+#define NUM_ROW  4      // define number of rows on keypad
+#define NUM_COL  4      // define number of columns on keypad
 
+const int row1 = 11;	// digital pin for row 1
 const int col1 = 7;		// digital pin for column 1
-const int col2 = 6; 	// digital pin for column 2
-const int col3 = 5; 	// digital pin for column 3
-const int col4 = 4; 	// digital pin for column 4
 
 /*
 * Setup function runs once at startup
@@ -19,17 +15,22 @@ const int col4 = 4; 	// digital pin for column 4
 */
 void setup() {
 
-    pinMode(row1, OUTPUT);	// configure pin representing row as an output pin
-    pinMode(row2, OUTPUT);	// as above
-    pinMode(row3, OUTPUT);	// as above
-    pinMode(row4, OUTPUT);	// as above
+    // loop through rows
+    for(int row = 0; row <NUM_ROW; row++) {
+
+        // configure pin representing current row as output pin
+        pinMode(row1 - row, OUTPUT);
+    }
+
+    // loop through columns
+    for(int col = 0; col < NUM_COL; col++) {
+        
+        // configure pin representing columns as input pin
+        pinMode(col1 - col, INPUT);
+    }
   
-    pinMode(col1, INPUT); 	// configure pin representing column as input pin
-    pinMode(col2, INPUT); 	// as above
-    pinMode(col3, INPUT); 	// as above
-    pinMode(col4, INPUT); 	// as above
-  
-    Serial.begin(9600);		// setup serial monitor as output with baud rate of 9600
+    // setup serial monitor as output with baud rate of 9600
+    Serial.begin(9600);		
 }
 
 /*
@@ -48,13 +49,13 @@ void loop() {
     };
 
     // loop through rows
-    for (int row = 0; row < 4; row++) {
+    for (int row = 0; row < NUM_ROW; row++) {
 
         // send a signal through current row
         digitalWrite(row1 - row, LOW);
 
         // loop through columns
-        for (int col = 0; col < 4; col++) {
+        for (int col = 0; col < NUM_COL; col++) {
 
             // read the current column and store signal in keySignal variable
             int keySignal = digitalRead(col1 - col);
