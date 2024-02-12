@@ -1,7 +1,12 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 2
+// Exercise 2, 3
 // Submission code: <XXXYYY>
+//
+// Note: the following source code contains implementation for both the 2nd and
+// the 3rd exercises. For the 2nd exercise, the `DHT.h` library was not used, so
+// the solution is applicable to the 3rd exercise as well. the circuits remain the
+// same, merely a multimeter is added to display the voltage (in exercise 3).
 
 // Macros section
 #define f_BAUD    9600 // Frequency of the serial port
@@ -44,10 +49,10 @@ void loop() {
   int light_intensity = (int) parse_light(raw_light);
   
   // Log the values to the serial monitor
-  Serial.print(temperature); Serial.println(" °C");
+  Serial.print(temperature); Serial.println(" C");
   Serial.print(light_intensity); Serial.println("%");
   
-  // Obtain the mapped ordinal values bassed on the current temperature and
+  // Obtain the mapped ordinal values based on the current temperature and
   // light intensity values.
   int m_t = t_map(temperature);
   int m_l = l_map(light_intensity);
@@ -70,7 +75,7 @@ void loop() {
     digitalWrite(RED_LED, LOW);   // Turn off RED_LED
   }
   
-  // Delay each interation of the loop by some milliseconds.
+  // Delay each iteration of the loop by some milliseconds.
   delay(sDELAY * 1000);
 }
 
@@ -80,13 +85,24 @@ void loop() {
  * even though we operate with integers in this exercise. This is to promote
  * future extensibility of the function (the same applies to `parse_light`).
  *
+ * The following solution is adapted from the linked article.
+ * @see https://learn.adafruit.com/tmp36-temperature-sensor/using-a-temp-sensor
+ *
  * @param r - current raw value (i.e., reading) from the analog port.
  * @returns - temperature value in Celsius (as a float).
  */
 float parse_temp(const int r) {
-  // Convert the value to voltages
+  // Convert the value to voltages (V).
   float voltage = (r * 5.0195f) / 1024.0f;
-  // Include 500 mV offset, convert 10 mV to V (x100)
+
+  // Replace 0 by 1 to allow the following line of code (to print the obtained value
+  // in Voltages. This is helpful when debugging or demonstrating that the solution works.
+#if 0
+  // Print the parsed V value.
+  Serial.print(voltage); Serial.println("V");
+#endif
+
+  // Include 500 mV (0.5V) offset, convert to temperature in Celsius.
   return (voltage - 0.5) * 100;
 }
 
