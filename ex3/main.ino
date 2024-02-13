@@ -7,16 +7,12 @@
 #define ROWS  4               // define number of rows on keypad
 #define COLS  4               // define number of columns on keypad
 #define SERIAL_BAUD_RATE 9600 // define baud rate for serial monitor
-#define DEBOUNCE_LIMIT 200    // define time (ms) required between key presses to register input 
-                              // (used to debounce unwanted repeat inputs)
+#define DB_INTERVAL 1000      // define time (ms) required between key presses to register input 
+                              // (used in delay function to debounce unwanted repeat inputs)
 
 // variable declarations
 const int ROW1 = 11;	      // digital pin for row 1
 const int COL1 = 7;           // digital pin for column 1
-
-unsigned long currentTime;    // variable tracking current time (to be compared against previous input time)
-unsigned long prevInputTime;  // variable tracking the previous time an input was registered 
-                              // (used to debounce unwanted repeat inputs)
 
 // multidimensional array represents keypad
 // values correspond to actual keypad's row/column configuration 
@@ -34,17 +30,17 @@ const char keypad[ROWS][COLS] = {
 void setup() {
 
     // loop through rows
-    for(int row = 0; row < ROWS; row++) {
+    for(int i = 0; i < ROWS; i++) {
 
         // configure pin representing current row as output pin
-        pinMode(ROW1 - row, OUTPUT);
+        pinMode(ROW1 - i, OUTPUT);
     }
 
     // loop through columns
-    for(int col = 0; col < COLS; col++) {
+    for(int j = 0; j < COLS; j++) {
 
         // configure pin representing columns as input pin
-        pinMode(COL1 - col, INPUT);
+        pinMode(COL1 - j, INPUT);
     }
   
     // setup serial monitor as output with defined baud rate
@@ -58,34 +54,31 @@ void setup() {
 void loop() {
 
     // loop through rows
-    for (int row = 0; row < ROWS; row++) {
+    for (int i = 0; i < ROWS; i++) {
 
         // send a signal through current row
-        digitalWrite(ROW1 - row, LOW);
+        digitalWrite(ROW1 - i, LOW);
 
         // loop through columns
-        for (int col = 0; col < COLS; col++) {
+        for (int j = 0; j < COLS; j++) {
 
             // read the current column and store signal in keySignal variable
-            int keySignal = digitalRead(COL1 - col);
-
-            // track current time 
-            currentTime = millis();
+            int keySignal = digitalRead(COL1 - j);
 
             // check if the key is pressed (if keySignal == 0)
             // check also that current time is not within certain ms of last registered input
             // this ensures we ignore unwanted input noise / bouncing from physical key presses
-            if (keySignal == LOW && currentTime - prevInputTime > DEBOUNCE_LIMIT) {
+            if (keySignal == LOW) {
 
                 // print the corresponding character from the keypad array
-                Serial.println(keypad[row][col]);
+                Serial.println(keypad[i][j]);
 
-                // track this registered input time to compare with future inputs
-                prevInputTime = currentTime;
+                // delay the program by 1 second to ensure no unwanted input noise / bouncing is registered
+                delay(DB_INTERVAL);
             }
         }
 
         // reset the current row
-        digitalWrite(ROW1 - row, HIGH);
+        digitalWrite(ROW1 - i, HIGH);
     }
 }
