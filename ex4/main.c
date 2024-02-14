@@ -6,7 +6,7 @@
 #include <stdio.h>                                      // header for standard library containing functions for input and output
 
 // function declarations
-int searchNumber(int number, int *tab, int size);       // determines if int number exists in an array and at what index
+int searchNumber(int number, int tab[], int size);       // determines if int number exists in an array and at what index
 void sort(int number, int tab[], int length);           // sorts elements of array in numerical order
 void swapElements(int* a, int* b);                      // helper that swaps array elements pointed at by two pointers
 void printArray(char* prefix, int *tab, int length);    // helper that prints contents of array
@@ -86,7 +86,7 @@ int searchNumber(int number, int tab[], int size) {
 * @param int* tab - pointer to the first element of array to be sorted
 * @param int length - number of elements in array  - TECHNICALLNY NOT PART OF ORIGINAL SIGNATURE!!!
 **/
-void sort(int number, int *tab, int length) {
+void sort(int number, int tab[], int length) {
 
     // declare variable to store the index of the smallest element in array
     int minIndex;
