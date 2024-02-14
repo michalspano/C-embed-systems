@@ -1,61 +1,84 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 4
+// Exercise 3
 // Submission code: <XXXYYY>
 
-// code has been adapted from example code by Mark Stanley & Alexander Brevig for the Keypad.h library
-// github repo: https://github.com/Chris--A/Keypad/blob/master/examples/CustomKeypad/CustomKeypad.ino
-
-// include section
-#include <Keypad.h>                     // include library for using matrix style keypads with Arduino
-
 // define section
-#define SERIAL_BAUD_RATE 9600           // define baud rate for serial monitor
+#define ROWS  4               // define number of rows on keypad
+#define COLS  4               // define number of columns on keypad
+#define SERIAL_BAUD_RATE 9600 // define baud rate for serial monitor
+#define DB_INTERVAL 1000      // define time (ms) required between key presses to register input 
+                              // (used in delay function to debounce unwanted repeat inputs)
 
 // variable declarations
-const byte ROWS = 4;                    // number of rows on keypad
-const byte COLS = 4;                    // number of columns on keypad
-
-byte ROW_PINS[ROWS] = {11, 10, 9, 8};   // array mapping pins to rows
-byte COL_PINS[COLS] = {7, 6, 5, 4};     // array mapping pins to columns
+const int ROW1 = 11;	      // digital pin for row 1
+const int COL1 = 7;           // digital pin for column 1
 
 // multidimensional array represents keypad
 // values correspond to actual keypad's row/column configuration 
-char keypad[ROWS][COLS] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
+const char keypad[ROWS][COLS] = {
+    {'1', '2', '3', 'A'},
+    {'4', '5', '6', 'B'},
+    {'7', '8', '9', 'C'},
+    {'*', '0', '#', 'D'}
 };
-
-// initialize custom keypad using keypad.h library function
-Keypad customKeypad = Keypad(makeKeymap(keypad), 
-                             ROW_PINS, 
-                             COL_PINS, 
-                             ROWS, 
-                             COLS); 
 
 /*
 * Setup function runs once at startup
+* Within it we configure the pins that connect to the keypad
 */
 void setup() {
 
-  // setup serial monitor as output with defined baud rate
-  Serial.begin(SERIAL_BAUD_RATE);
+    // loop through rows
+    for(int i = 0; i < ROWS; i++) {
+
+        // configure pin representing current row as output pin
+        pinMode(ROW1 - i, OUTPUT);
+    }
+
+    // loop through columns
+    for(int j = 0; j < COLS; j++) {
+
+        // configure pin representing columns as input pin
+        pinMode(COL1 - j, INPUT);
+    }
+  
+    // setup serial monitor as output with defined baud rate
+    Serial.begin(SERIAL_BAUD_RATE);		
 }
 
 /*
 * Main loop runs continuously
+* Each loop, we check if a key has been pressed
 */
-void loop()
-{
-  // call keypad.h library function to store the value of any pressed key
-  char customKey = customKeypad.getKey();
-  
-  // if the value of customKey is truthy (!= 0)
-  if (customKey){
+void loop() {
 
-    // print the character to the serial monitor
-    Serial.println(customKey);
-  }
+    // loop through rows
+    for (int i = 0; i < ROWS; i++) {
+
+        // send a signal through current row
+        digitalWrite(ROW1 - i, LOW);
+
+        // loop through columns
+        for (int j = 0; j < COLS; j++) {
+
+            // read the current column and store signal in keySignal variable
+            int keySignal = digitalRead(COL1 - j);
+
+            // check if the key is pressed (if keySignal == 0)
+            // check also that current time is not within certain ms of last registered input
+            // this ensures we ignore unwanted input noise / bouncing from physical key presses
+            if (keySignal == LOW) {
+
+                // print the corresponding character from the keypad array
+                Serial.println(keypad[i][j]);
+
+                // delay the program by 1 second to ensure no unwanted input noise / bouncing is registered
+                delay(DB_INTERVAL);
+            }
+        }
+
+        // reset the current row
+        digitalWrite(ROW1 - i, HIGH);
+    }
 }
