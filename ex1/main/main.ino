@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
 // Exercise 1
-// Submission code: <XXXYYY>
+// Submission code: 0173549
 
 uint8_t button_is_on     = 0,        // Store the state of the push button (on/off)
         LED_is_on        = 0;        // Store the state of the LED (on/off)

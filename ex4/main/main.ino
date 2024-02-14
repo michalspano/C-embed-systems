@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 3
-// Submission code: <XXXYYY>
+// Exercise 4
+// Submission code: 0173549
 
 // define section
 #define ROWS  4               // define number of rows on keypad

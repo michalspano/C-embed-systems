@@ -1,15 +1,16 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
 // Exercise 2, 3
-// Submission code: <XXXYYY>
+// Submission code: 0173549
 //
 // Note: the following source code contains implementation for both the 2nd and
 // the 3rd exercises. For the 2nd exercise, the `DHT.h` library was not used, so
-// the solution is applicable to the 3rd exercise as well. the circuits remain the
+// the solution is applicable to the 3rd exercise as well. The circuits remain the
 // same, merely a multimeter is added to display the voltage (in exercise 3).
 
 // Macros section
 #define f_BAUD    9600 // Frequency of the serial port
+#define LIGHT_MAX 67.0 // Max raw value of the light intensity sensor
 #define BLUE_LED  2    // Pin of blue LED
 #define RED_LED   4    // Pin of red LED
 #define GREEN_LED 7    // Pin of green LED
@@ -116,7 +117,7 @@ float parse_temp(const int r) {
 float parse_light(const int r) {
   // The sensor in use produces a max value of 67. Hence, we map each reading
   // as a relative percentage of the maximum value. 
-  return (r / 67.0f) * 100;
+  return (r / LIGHT_MAX) * 100.0f;
 }
 
 /**

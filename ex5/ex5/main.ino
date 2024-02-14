@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 4
-// Submission code: <XXXYYY>
+// Exercise 5
+// Submission code: 0173549
 
 // code has been adapted from example code by Mark Stanley & Alexander Brevig for the Keypad.h library
 // github repo: https://github.com/Chris--A/Keypad/blob/master/examples/CustomKeypad/CustomKeypad.ino

@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 3
-// Exercise 5
-// Submission code: <XXXYYY>
+// Exercise 6
+// Submission code: 0173549
 
 // Includes section
 #include <stdio.h>
