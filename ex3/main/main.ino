@@ -1,15 +1,21 @@
+// (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
+// Work package 5
+// Exercise 3
+// Submission code: <XXXYYY>
+
+// Includes section
 #include <Adafruit_NeoPixel.h>
 
 // Macros section
-#define f_BAUD    9600  // Serial monitor BAUD rate
-#define RED_LED   2     // Digital pin 2
-#define LIGHT_MAX 67    // Maximum value of the light sensor
-#define RING_PIN     4  // Digital pin 4
+#define f_BAUD     9600 // Serial monitor BAUD rate
+#define RED_LED      2  // Digital pin of the red LED
+#define RING_PIN     4  // Digital pin of the pixel ring
+#define LIGHT_MAX    67 // Maximum value of the light sensor
 #define RING_LED_NUM 16 // Number of pixels (i.e., small LEDs) on the ring
 
 // Initialize a NeoPixel Ring
 Adafruit_NeoPixel ring(
-  RING_LED_NUM,        // 16 LEDs variant
+  RING_LED_NUM,        // 16 LEDs variant (that is in use in this exercise)
   RING_PIN,            // at pin 4
   NEO_RGB + NEO_KHZ800 // RGB mode with a correct frequency
 );
@@ -23,11 +29,11 @@ const uint8_t RGB[3] = {
 
 const float sDELAY = 0.5; // Span of each iteration (in seconds)
 
-// Global variable state for the pixel ring (i.e., how many LEDs
-// are turned ON).
-// Note: the `setPixelColor` is 0 indexed. However, this variable
-// stores values 1 through 16 (so, using 0 in its declaration is
-// a "safe" option.
+// Global variable state for the pixel ring (i.e., how many LEDs are turned
+// ON).
+// Note: the function `setPixelColor()` uses a zero-based indexing. However,
+// this variable stores values 1 through 16 (so, using 0 in its declaration is
+// a "safe" option).
 uint8_t ring_state = 0;
 
 /**
@@ -53,11 +59,11 @@ void loop() {
                             0, LIGHT_MAX,
                             0, 100);
 	
-  // Make the light intensity to an ordinal to determine how many LEDs of the ring
+  // Map the light intensity to an ordinal to determine how many LEDs of the ring
   // are to be turned on.
   uint8_t r_idx = map(light_intensity,
-                      0, 100,
-                      1, RING_LED_NUM + 1);
+                      0, 100,               // Based on the previous mapping
+                      1, RING_LED_NUM + 1); // 1 through 16 + 1 (17 is a corner case)
   
   // Update the pixel ring iff a change in the LEDs is to be carried out.
   // This enhances the performance of the program to a great extent.
@@ -69,10 +75,9 @@ void loop() {
       
     // More LEDs are to be added
     if (r_idx > ring_state) {
-      
       // The current reading indicated that more LEDs are to be turned on.
       // Detect how many and iterate that many times.
-      for (int i = 0; i < r_idx - ring_state; i++) {
+      for (uint8_t i = 0; i < r_idx - ring_state; i++) {
         
         // Light up the LED with the RGB values at the current position
         ring.setPixelColor(ring_state + i,
@@ -82,15 +87,16 @@ void loop() {
     // Less LEDs are to be shown
     } else {
       // The difference between the current state and the mapped value represents
-      // how many LEDs are to be turned off.
-      for (int i = 1; i <= ring_state - r_idx; i++) {
+      // how many LEDs are to be turned off. Proceed to turn off that many LEDs.
+      for (uint8_t i = 1; i <= ring_state - r_idx; i++) {
         ring.setPixelColor(ring_state - i, 0, 0, 0); // Dim LED at the current position
         ring.show(); // Show the update in the ring immediately
       }
     }
   }
   
-  // Update the state of the pixel ring with the current value
+  // Update the state of the pixel ring with the current index (i.e., how many LEDs
+  // are turned on).
   ring_state = r_idx;
   
   // Delay each iteration of the loop by some milliseconds
