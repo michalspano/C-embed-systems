@@ -281,6 +281,11 @@ unsigned long TimerOne::read()		//returns the value of the timer in microseconds
 
 /* ==================== Source Code ==================== */
 
+// (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
+// Work package 5
+// Exercise 1
+// Submission code: <XXXYYY>
+
 // Macros section
 #define f_BAUD    9600  // Frequency of the serial port
 #define LED_COUNT 6     // Number of LEDs in this exericse, 5 + 1 Extra
@@ -288,7 +293,7 @@ unsigned long TimerOne::read()		//returns the value of the timer in microseconds
 // Represent lower and upper bounds as an enum to enhance readability.
 // These bounds represent a state when the red LED is ON.
 enum {
-  LED_LOWER_BOUND   = -1,
+  LED_LOWER_BOUND = -1,
   LED_UPPER_BOUND = LED_COUNT -1
 } LED_BOUNDS;
 
@@ -311,20 +316,15 @@ int8_t led_state = 0;
 const uint8_t LED1_MIN =  0, // <- Start editing ranges here...
               LED1_MAX = 10,
               LED2_MIN = 11,
-			  LED2_MAX = 20,
+			        LED2_MAX = 20,
               LED3_MIN = 21,
-			  LED3_MAX = 30,
+			        LED3_MAX = 30,
               LED4_MIN = 31,
               LED4_MAX = 40,
               LED5_MIN = 41,
               LED5_MAX = 50;
 
 /* ==================== Sensor Ranges ==================== */
-
-// (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
-// Work package 1
-// Exercise 1 
-// Submission code: <XXXYYY>
 
 /**
  * Initialize all components, begin a serial monitor at 9600.
