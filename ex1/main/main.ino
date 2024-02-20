@@ -284,7 +284,7 @@ unsigned long TimerOne::read()		//returns the value of the timer in microseconds
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 5
 // Exercise 1
-// Submission code: <XXXYYY>
+// Submission code: 939466
 
 // Macros section
 #define f_BAUD    9600  // Frequency of the serial port

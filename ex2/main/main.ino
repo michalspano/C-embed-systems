@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 5
 // Exercise 2
-// Submission code: <XXXYYY>
+// Submission code: 939466
 //
 // Note: the following implementation is largely based on this article:
 // - https://projecthub.arduino.cc/Marcazzan_M/internal-timers-of-arduino-6c0f66

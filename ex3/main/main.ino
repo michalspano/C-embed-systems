@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 5
 // Exercise 3
-// Submission code: <XXXYYY>
+// Submission code: 939466
 
 // Includes section
 #include <Adafruit_NeoPixel.h>
