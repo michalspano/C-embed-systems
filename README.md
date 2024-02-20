@@ -1,11 +1,27 @@
-# Submission code: 939466
+## Submission format
 
-## Flow
+The directory structure of our submission is the following:
 
-All team members have a branch they can work on individually, namely
-`<X>-branch`, where `X` is the initial of their first name. The `main` branch
-will contain the **solution** that will be later turned in.
+```txt
+./
+├── README.md               # This file =)
+├── ex1                     # Exercise 1: Interrupts on Timer
+│   ├── ex1-circuit.pdf     # Circuit information
+│   ├── tinkercad.png       # Workspace export
+│   └── main
+│       └── main.ino        # Arduino C++ source code
+├── ex2                     # Exercises 2: Analog Timer
+│   ├── ex2-circuit.pdf     # Circuit information
+│   ├── tinkercad.png       # Workspace export
+│   └── main
+│       └── main.ino        # Arduino C++ source code
+├── ex3                     # Exercise 3: Addressable LEDs
+│   ├── ex3-circuit.pdf     # Circuit information
+│   ├── main
+│   │   └── main.ino        # Arduino C++ source code
+│   └── tinkercad.png       # Workspace export
+└── ex4                     # Exericse 4: Lists
+    └── main.c              # C source code
+```
 
-Note: in case it's required, additional branches can be created, and the
-features of `GitLab` (issues, merge requests, etc.) can be used, although
-this is not mandatory.
+### Submission code: `939466`
