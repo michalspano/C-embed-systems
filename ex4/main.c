@@ -29,7 +29,7 @@ int main (void) {
     int n = 13;                                        // define an integer to find
     int test[] = {1, 2, 34, 5, 67, 3, 23, 12, 13, 10}; // initialize an array of integers (taken from the example)
     int size   = sizeof(test);                         // determine size of array (in bytes)
-    int length = size / sizeof(int);                   // determine length of array by dividing its size by the size of one elemnet
+    int length = size / sizeof(int);                   // determine length of array by dividing its size by the size of one element
 
     // call helper function to print the unsorted array
     printArray("Unsorted array:", test, length);
