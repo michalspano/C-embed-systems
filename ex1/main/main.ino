@@ -3,6 +3,9 @@
 // Exercise 1
 // Submission code: <XXXYYY>
 
+// Note: Task 1 should be implemented as a separate source code file (i.e.,
+// Sketch).
+
 // Defines section
 #define ENCA 2
 #define ENCB 3
@@ -21,7 +24,7 @@ int degtarget = 0, // Target position in degrees
 
 // Note: $K_{p}$ has been tweaked with different values, albeit =4 seems to provide
 // the 'best' result.
-int kp = 4;    // Proportional constant for controller (tuning parameter)
+int kp    = 4; // Proportional constant for controller (tuning parameter)
 int u_out = 0; // output of controller
 
 int e = 0, // Globally used error value
