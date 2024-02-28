@@ -1,12 +1,10 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 6
-// Exercise 1
+// Exercise 1, tasks 2, 3
 // Submission code: <XXXYYY>
 
-// Note: Task 1 should be implemented as a separate source code file (i.e.,
-// Sketch).
-
 // Defines section
+// DC motor pins
 #define ENCA 2
 #define ENCB 3
 #define PWM1 5
@@ -25,7 +23,7 @@ int degtarget = 0, // Target position in degrees
 // Note: $K_{p}$ has been tweaked with different values, albeit =4 seems to provide
 // the 'best' result.
 int kp    = 4; // Proportional constant for controller (tuning parameter)
-int u_out = 0; // output of controller
+int u_out = 0; // Output of controller
 
 int e = 0, // Globally used error value
     a = 0, // A-encoder signal
@@ -36,29 +34,32 @@ void setup() {
   Serial.begin(SERIAL_PORT);  // Begin Serial Monitor
   pinMode(ENCA,INPUT_PULLUP); // Channel A
   pinMode(ENCB,INPUT_PULLUP); // Channel B
-  pinMode(PWM1,OUTPUT);       // I'm actually not sure what this congigures.
-  pinMode(PWM2,OUTPUT);       // I'm actually not sure what this congigures (yet again).
+  pinMode(PWM1,OUTPUT);       // I'm actually not sure what this configures.
+  pinMode(PWM2,OUTPUT);       // I'm actually not sure what this configures (yet again).
 
-  // Attach the interrupt; note: it should be sufficient to attacht the
-  // interrupt to only one of the encoder ports.
+  // Attach the interrupt; note: it should be sufficient to attache the
+  // interrupt to only one of the encoder ports. This part is related to task 2
+  // of this exercise.
   attachInterrupt(
                   digitalPinToInterrupt(ENCB), // Digital type at `ENCB`
                   ISR_readEncoder,             // Use the ISR
                   CHANGE                       // On event `CHANGE`
   );
   
-  // Start the motor, just a tiny little bit because otherwise TinkerCad
-  // dies... avoid the TinkerCad bug.
+  // Avoid TinkerCad bug. Replace 1 with 0 to disable the following.
+#if 1
   analogWrite(PWM2, 10); delay(1000); analogWrite(PWM1, 10);
+#endif
 }
 
 /* The loop function of the program */
 void loop() {
-  // Stop the motor, but not to zero because then TinkerCad dies... avoid the
-  // TinkerCad bug.
-  analogWrite(PWM1, 10); delay(1000); analogWrite(PWM2, 10);
+  // Avoid TinkerCad bug. Replace 1 with 0 to disable the following.
+#if 1
+  analogWrite(PWM2, 10); delay(1000); analogWrite(PWM1, 10);
+#endif
   
-  // Check if motor rotated all the way around, and reset the state
+  // Check if motor rotated all the way around and reset the state
   if (pos > POS_MAX) {  // For any spins greater than one full circle
     deg = deg - FULL_CIRCLE_MAX;
     pos = pos - POS_MAX;
@@ -66,28 +67,30 @@ void loop() {
     deg =  FULL_CIRCLE_MAX + deg;
     pos = POS_MAX + pos;
   }
-  
-  // Print current position (in degrees)
+
+  // Log the current position
   Serial.print("The current position is: "); Serial.println(deg);
    
   // Get input from the user (from the Serial port)
-  degtarget = getInput();
+  degtarget = get_int();
   
   // Calculate (initial) error
   // $\to e = pos_{is} - pos_{desired}$
   e = degtarget - deg;
 
-  // Output the error onto the Serial Monitor. Can be disabled by replacing 1
-  // by 0.
-#if 1
-  Serial.print("Current error: "); Serial.println(e);
-#endif
-    
   // Loop until error is zero
-  while(e) {
+  while (e != 0) {
     
     // Map current position into degrees
     deg = map(pos, 0, POS_MAX, 0, FULL_CIRCLE_MAX);
+
+    // Log the current value of `deg` and output the error value onto the
+    // Serial Monitor. These are disabled by default, because they seem to obfuscate
+    // the Serial Monitor output and the motor's behavior. Replace 0 with 1 to enable.
+#if 0
+    Serial.print("Current error: "); Serial.println(e);
+    Serial.print("The current angle (deg) is: "); Serial.println(deg);
+#endif
        
   	// Get necessary speed signal
   	speed = getAction(e);
@@ -98,17 +101,15 @@ void loop() {
     	if (speed < 100) speed = 100;
 
       // Write to the motor
-      analogWrite(PWM2, 0);
-      analogWrite(PWM1, speed);
-  	}
-    // Counter-clockwise rotation
-  	else {
+      analogWrite(PWM1, speed); // Write `speed` to PWM1
+      analogWrite(PWM2, 0);     // Write 0 to PWM2
+  	} else { // Counter-clockwise rotation
       // The motor does not react with too low inputs
     	if (-speed < 100) speed = -100; 
 
       // Write to the motor
-      analogWrite(PWM1, 0);
-      analogWrite(PWM2, -speed); 
+      analogWrite(PWM1, 0);      // Write 0 to PWM1
+      analogWrite(PWM2, -speed); // Write the negated `speed` value to PWM2
     }
 
     // Calculate the new error and assign it to the global variable.
@@ -122,14 +123,15 @@ void loop() {
  *
  * @returns - a three digit integer read from the Serial port.
  */
-int getInput(){
+int get_int() {
   char buf[3];    // To store the raw value
   int ready =  0, // To indicate the state
       input = -1; // To store the parsed value
-
-  Serial.print("Please enter the desired position: \n");
+  
+  // Prompt the user via the Serial Monitor
+  Serial.println("Please enter the desired position:");
  
-  // While the user is typing the value, block the exeuction
+  // While the user is typing the value, block the execution
   while (!ready) {
     ready = Serial.readBytes(buf, 3); // Read 3 chars
     input = atoi(&buf[0]);            // Attempt to parse as an int
@@ -142,20 +144,24 @@ int getInput(){
 /**
  * Helper function to drive the motor to a desired position (in degrees).
  * This function return the control signal $u_{out}$ that is provided to the motor.
+ * Part of task 3 of Exercise 1.
  */
 int getAction(int error) {
   // Calculate u_out as function of the error and the kp (tuning parameter).
   // This relation is described in Task 3: A Position Controller.
   u_out = kp * e;
 
-  // Note: u_out cannot be more than 255 or less than -254.
+  // Note: `u_out` cannot be more than 254 or less than -254.
   // Otherwise, return the value. 
   if      (u_out >  254) return   255;
   else if (u_out < -254) return  -255;
   else                   return u_out; // OK
 }
 
-/* An interrupt service routine for A, B encoders */
+/**
+ * An interrupt service routine for A, B encoders triggered on a CHANGE event.
+ * Part of task 2 of Exercise 1.
+ */
 void ISR_readEncoder(){
   int encoder_A = digitalRead(ENCA), // Read the value of the A encoder
       encoder_B = digitalRead(ENCB); // Read the value of the B encoder
