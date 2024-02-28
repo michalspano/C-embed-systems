@@ -32,7 +32,7 @@ void loop() {
   // Prompt message to enter a speed value
   Serial.println("Enter speed (1-100):");
 
-  // Read the value from the user
+  // Read the value from the user (3 digits)
   int speed = get_int(3);
 
   // Remap the value to 0-SPEED_MAX. We desire to make the UX intuitive for the
@@ -67,9 +67,10 @@ void loop() {
 }
 
 /**
- * A helper function to read a three digit integer from the Serial port.
+ * A helper function to read a `size` digit integer from the Serial port.
  *
- * @returns - a three digit integer read from the Serial port.
+ * @param size - how many digits to read.
+ * @returns    - a three digit integer read from the Serial port.
  */
 int get_int(const uint8_t size){
   char buf[size]; // To store the raw value
