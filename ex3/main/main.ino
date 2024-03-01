@@ -141,7 +141,7 @@ uint8_t map_idx(uint8_t idx) {
     case 4: return 11;
     case 5: return 14;
     case 6: return 17;
-    defualt:       -1; // Invalid event
+    default:       -1; // Invalid event
   }
 }
 
