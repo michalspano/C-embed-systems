@@ -1,7 +1,7 @@
 // (C) Erik Lindstrand, Konstantinos Rokanas, Michal Spano, group: 5 (2024)
 // Work package 6
 // Exercise 1, tasks 2, 3
-// Submission code: <XXXYYY>
+// Submission code: 389372
 
 // Defines section
 // DC motor pins
