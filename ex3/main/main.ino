@@ -3,12 +3,11 @@
 // Exercise 3
 // Submission code: 389372
 
-// TODO: there's still some parts of the code to comment.
-
 // Includes section
 #include <Keypad.h>
 #include <Adafruit_NeoPixel.h>
 
+// Defines section
 #define RING_PIN      2 // Digital pin of the input of NeoPixel
 #define ADDRESS_LEN   7 // Number of digits in an address
 #define ADDRESS_COUNT 8 // # of valid addresses
@@ -16,18 +15,26 @@
 
 #define SERIAL_PORT 9600 // Serial monitor port
 
-/* ============================ ANIMATION CONFIG ============================ */
+// A custom type to represent a color (RGB). Perhaps expand this for each unit to be float?
+struct COLOR { uint8_t r, g, b; };
+
+/* ============================ CONFIG ====================================== */
+
 // Replace the `#if 0` with `#if 1` to enable the advanced animation. Otherwise,
 // the basic animation will be used.
 #if 1
   #define ANIMATION_ADVANCED
 #endif
-/* ============================ ANIMATION CONFIG ============================ */
 
-// A custom type to represent a color (RGB). Perhaps expand this for each unit to be float?
-struct COLOR {
-  uint8_t r, g, b;
+// A color to use when highlighting the LEDs that represent the digits. This is an
+// easily customizable 'interface' and the values can be adjusted here:
+const struct COLOR DIGIT_LED_COL = (struct COLOR) {
+  100, // <-- Red
+  155, // <-- Green
+  120  // <-- Blue
 };
+
+/* ============================ CONFIG ====================================== */
 
 const byte ROW_COUNT = 4; // # of rows of the keypad
 const byte COL_COUNT = 4; // # of columns of the keypad
@@ -71,14 +78,6 @@ const char ADDRESS[ADDRESS_COUNT][ADDRESS_LEN + 1] = {
   "23B393B", "9999999"
 };
 
-// A color to use when highlighting the LEDs that represent the digits. This is
-// easily customizable and the values can be adjusted here:
-const struct COLOR DIGIT_LED_COL = (struct COLOR) {
-  100, // Red
-  155, // Green
-  120  // Blue
-};
-
 // A buffer that stores which LEDs have been 'locked in' accompanied with a cumulatively
 // incremented index. This is used to keep track of the LEDs that represent the digits.
 uint8_t l_idx = 0,
@@ -95,20 +94,20 @@ void setup() {
 /* The main body of the program */
 void loop() {
   Serial.println("=~= StarGate =~=");
-  
+
   // Read the address from the Keypad (call the helper function)
   char* address = read_address();
 
   // Start dialing...
   Serial.println("=~============~=");
   Serial.println("Dialing...");
-  
+
   // Proceed with the dialing, call the dial wrapper to "lock in" the first 6
   // LEDs. This functionality has been factored out to make the code more
   // readable and maintainable.
   uint8_t i = 0;
   while (i < 6) { dial_wrapper(i); i++; }
-  
+
   // Decision based on the validity of the address: if the address is valid,
   // lock in the last LED and block the sequence. Otherwise, show an error
   // sequence indefinitely.
@@ -121,14 +120,21 @@ void loop() {
     Serial.println("OK");               // Success message
     free(address);                      // Free the address from the heap
     dial_wrapper(6);                    // Dial the last LED digit
-    for (;;);                           // Block the sequence
+    for (;;);                           // Block the sequence indefinitely
   }
+
+  // Note: the `for (;;)` is used to block the sequence indefinitely. This is
+  // done to prevent the program from exiting the loop and to keep the LEDs
+  // turned on. This behavior may be adjusted based on the requirements, albeit
+  // is left as is for the sake of simplicity.
 }
 
 /**
  * A helper function that maps a digit index (0-6) to respective LED ring
  * indices (0-23). The event of assignment is rather sporadic and the values
  * are not consecutive, hence the following switch statement.
+ *
+ * Note: the index is 0-based.
  *
  * @param idx - index digit
  * @returns   - LED ring index (-1 for invalid)
@@ -152,13 +158,16 @@ uint8_t map_idx(uint8_t idx) {
  * LEDs. Ultimately, the changes are reflected using the `toggle_digit_LEDs`
  * routine. To make this change visible to the user, the process is delay
  * by 1.5 seconds.
+ *
+ * @param idx - current NeoPixel's LED index value
  */
 void dial_wrapper(uint8_t idx) {
+  // Start to dial, obtain the mapped index based on the given value.
   dial(); idx = map_idx(idx);
-  
+
   // First LED from the subgroup
   led_agenda[l_idx++] = idx;
-  
+
   // Second LED from the subgroup. Ensure the value is rebound to the start
   // if the maximum value is reached.
   if (idx >= RING_LED_NUM-1) idx = -1;
@@ -207,7 +216,7 @@ void dial() {
 #endif
 
     // Turn on the current pixel LED, show the changes and wait for 0.125s
-    ring.setPixelColor(i, c.r, c.g, c.b);
+    ring.setPixelColor(i, c.g, c.r, c.b); // Uses GRB notion (not RGB)
     ring.show(); delay(125);
   }
 
@@ -222,7 +231,7 @@ void dial() {
 void error() {
   // Turn on all LEDs to RED
   for (uint8_t i = 0; i < RING_LED_NUM; i++) {
-    ring.setPixelColor(i, 0, 255, 0);
+    ring.setPixelColor(i, 0, 255, 0); // RED color at i-th position
   }
 
   // Show the changes and wait for 0.5s
@@ -230,7 +239,7 @@ void error() {
 
   // Dim all LEDs
   for (uint8_t i = 0; i < RING_LED_NUM; i++) {
-    ring.setPixelColor(i, 0, 0, 0);
+    ring.setPixelColor(i, 0, 0, 0); // 0, 0, 0 (rgb val.)
   }
 
   // Show the changes and wait for 0.5s
@@ -240,28 +249,44 @@ void error() {
 /* The 'simple' animation routine: a random color is generated for each LED. */
 struct COLOR random_col() {
   struct COLOR c = (struct COLOR) {
-    rand() % 255,
-    rand() % 255,
-    rand() % 255
+    rand() % 255 + 1, // 1-255
+    rand() % 255 + 1, // 1-255
+    rand() % 255 + 1  // 1-255
   };
 
+  // Return the random color
   return c;
 }
 
-/* The 'advanced' animation routine: the circle is split to 3 segments and each
- * segment is assigned a color. The color is then mapped to the LED index. */
+/**
+ * The 'advanced' animation routine: the circle is split to 3 segments and each
+ * segment is assigned shades of a color (in a gradient manner). The color is
+ * then mapped to the LED index.
+ *
+ * @param idx - index of the LED
+ */
 struct COLOR map_to_color(uint8_t idx) {
+  // Start with a black color
   struct COLOR c = (struct COLOR) { 0, 0, 0 };
-  
-  // Per segment index * (255 / 8) to get the color
-  float color = ((idx % 8) +1) * (255.0 / 8);
 
-  switch (idx / 8) { // Switch based on the segment (3 channels)
-    case 0: c.g = color; break;
-    case 1: c.r = color; break;
-    case 2: c.b = color; break;
+  // Calculate the color based on the index. There's 24 LEDs and 3 segments
+  // (8 LEDs per segment). The formula is basically:
+  // ```
+  // color = (i + 1) * (255 / 8)
+  // ```
+  // where `i` is the segment index (0-7). 255/8 implies the gradient
+  // increment.
+
+  uint8_t color = ((idx % 8) + 1) * (255.0 / 8);
+
+  // Switch based on the segment index
+  switch (idx / 8) {
+    case 0: c.r = color; break; // Segment 1 (red)
+    case 1: c.g = color; break; // Segment 2 (green)
+    case 2: c.b = color; break; // Segment 3 (blue)
   }
 
+  // Return the color
   return c;
 }
 
@@ -293,19 +318,19 @@ char* read_address() {
   // Keep a pointer to the start of the address
   char *pAddress = address;
 
-  char key;      // Store the current keuy
+  char key;      // Store the current key
   uint8_t i = 0; // A local index
 
   while (i < ADDRESS_LEN) { // Attempt to read 7 keys
     key = keypad.getKey();  // Attempt to get the key
     if (key) {              // If a key is detected
       *address++ = key;     // Register the key in the digit
-      print_key(key, ++i);  // Print the obtained key
+      print_key(key, ++i);  // Print the obtained key (and increment i)
     }
     delay(100);             // Delay for the ease of usability
   }
 
-  // Add the null terminate the character
+  // Add the null terminator to the end of the address
   *address = '\0';
 
   // Return the pointer of the char sequence
